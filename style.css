@@ -52,22 +52,6 @@
     resize: none;
     border: 0ch;
 }
-
-.left-text, .right-text{
-    max-width: 50%;
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  
-  .left-text {
-    text-overflow: ellipsis;
-  }
-  
-  .right-text{
-    text-overflow: "";
-    direction: rtl;
-  }
   
 
   @media screen and (max-width: 750px) {

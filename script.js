@@ -1,23 +1,12 @@
-const leftGrid = document.querySelector(".left-flex");
-const rightGrid= document.querySelector(".right-flex");
+import { truncateMiddle } from "./truncate.js";
+
+
 const listItems = document.querySelector(".list-items");
 const rightImageDesc = document.querySelector(".right-image-desc");
 
 var idx = 0; // idx tracks the current list item acccessed
 
-const getLeftAndRightParts = (title)=>{
-    // returns the left and right parts for a given text
-    let len = title.length;
-    let leftText, rightText;
 
-    leftText = title.slice(0,len/2);
-    if(len%2==0)
-        rightText = title.slice(-len/2);
-    else 
-        rightText = title.slice(-len/2-1);
-
-    return [leftText, rightText];
-}
 const addLeftHTMLComponents = (value, id) =>{
 
     const listItem = document.createElement("li"); // parent li which is made into a grid to contain the image and text
@@ -26,49 +15,39 @@ const addLeftHTMLComponents = (value, id) =>{
 
     const listItemImage = document.createElement("img"); // image of the list-item
 
-    const listItemTextLeft = document.createElement("span"); // left-part of text
-    const listItemTextRight = document.createElement("span"); // right-part of text
-
     listItem.classList.add("list-item");
     listTitle.classList.add("list-item-text")
-    listItemTextLeft.classList.add("left-text")
-    listItemTextRight.classList.add("right-text")
     listItemImage.classList.add("list-item-image")
     listItemImage.setAttribute("alt", value.title)
 
     listItem.id = "l" + id.toString(); // assigning the id for each list item to access them later using these
 
-    let [leftText, rightText] = getLeftAndRightParts(value.title);
-
-    // assign the left and right texts to their respective elements
-    listItemTextLeft.innerText = leftText; 
-    listItemTextRight.innerText = rightText;
-
     listItemImage.src = value.previewImage;
-
+    
     // adding the on-click event for the list items
     listItem.addEventListener("click",
-        ()=>{
-            // global idx is equals the current-element's id
-            idx = id;
-            toggleRightImage()
-        }
+    ()=>{
+        // global idx is equals the current-element's id
+        idx = id;
+        toggleRightImage()
+    }
     )
-
+    
     listItem.appendChild(listItemImage);
     listItem.appendChild(listTitle);
-    listTitle.appendChild(listItemTextLeft);
-    listTitle.appendChild(listItemTextRight);
     listItems.appendChild(listItem);
+    console.log(value.title);
+    listTitle.innerHTML = truncateMiddle(value.title, listTitle);
 
     // initializing the right pane with the first list-item on left pane
     if(id==0)
-        toggleRightImage(listItem,0);
+        toggleRightImage();
 }
 
 let prevListItem;
 const toggleRightImage = ()=>{
     // this function toggles the right pane according to the left pane's selected list-item
+    
     const listItem = document.querySelector("#l"+idx);
 
     // toggling the color for the previous and the currently selected item
@@ -80,10 +59,10 @@ const toggleRightImage = ()=>{
     listItem.style.backgroundColor = "#015ece";
     listItem.style.color = "white";
 
-    item = itemData[idx];
+    const item = itemData[idx];
     const rightImage = document.querySelector(".right-image");
-    rightImage.src = item.previewImage;
     
+    rightImage.src = item.previewImage;
     rightImageDesc.value = item.title;
 
     // the current item becomes the previous item for the next time toggleRightImage is called
@@ -107,17 +86,12 @@ const toggleDown = ()=>{
 const updateDescription = (updatedDesc)=>{
     
     const listItem = document.querySelector("#l"+idx);
-    
+    const listItemText = listItem.querySelector(".list-item-text");
+
     //update the itemData title so it remains same for future references
     itemData[idx].title = updatedDesc;
-    const listItemTextLeft = listItem.querySelector(".left-text");
-    const listItemTextRight = listItem.querySelector(".right-text");
-
-    let [leftText, rightText] = getLeftAndRightParts(updatedDesc);
-    // updating the title for the left-pane list items
-    listItemTextLeft.innerText = leftText;
-    listItemTextRight.innerText = rightText;
-
+    const title = truncateMiddle(updatedDesc, listItemText);
+    listItemText.innerHTML = title;
 }
 
 function mainFunc(){
